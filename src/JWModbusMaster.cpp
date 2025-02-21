@@ -1,18 +1,13 @@
-/**
-@file
-Arduino library for communicating with Modbus slaves over RS232/485 (via RTU protocol).
-*/
-
 #include "JWModbusMaster.h"
 
-ModbusMaster::ModbusMaster(void)
+JWModbusMaster::JWModbusMaster(void)
 {
   _idle = 0;
   _preTransmission = 0;
   _postTransmission = 0;
 }
 
-void ModbusMaster::begin(uint8_t slave, Stream &serial)
+void JWModbusMaster::begin(uint8_t slave, Stream &serial)
 {
   _u8MBSlave = slave;
   _serial = &serial;
@@ -29,7 +24,7 @@ void ModbusMaster::begin(uint8_t slave, Stream &serial)
  * Nota: Esta función actualmente no está implementada de forma completa.
  * Se utiliza para reiniciar los índices del buffer de respuesta.
  */
-uint8_t ModbusMaster::requestFrom(uint16_t address, uint16_t quantity)
+uint8_t JWModbusMaster::requestFrom(uint16_t address, uint16_t quantity)
 {
   // Clamp the requested quantity to the maximum buffer size.
   if (quantity > ku8MaxBufferSize)
@@ -41,14 +36,14 @@ uint8_t ModbusMaster::requestFrom(uint16_t address, uint16_t quantity)
   return 0;
 }
 
-void ModbusMaster::beginTransmission(uint16_t u16Address)
+void JWModbusMaster::beginTransmission(uint16_t u16Address)
 {
   _u16WriteAddress = u16Address;
   _u8TransmitBufferIndex = 0;
   _u16TransmitBufferLength = 0;
 }
 
-void ModbusMaster::sendBit(bool data)
+void JWModbusMaster::sendBit(bool data)
 {
   uint8_t txBitIndex = _u16TransmitBufferLength % 16;
   if ((_u16TransmitBufferLength >> 4) < ku8MaxBufferSize)
@@ -63,7 +58,7 @@ void ModbusMaster::sendBit(bool data)
   }
 }
 
-void ModbusMaster::send(uint16_t data)
+void JWModbusMaster::send(uint16_t data)
 {
   if (_u8TransmitBufferIndex < ku8MaxBufferSize)
   {
@@ -73,23 +68,23 @@ void ModbusMaster::send(uint16_t data)
   }
 }
 
-void ModbusMaster::send(uint32_t data)
+void JWModbusMaster::send(uint32_t data)
 {
   send(lowWord(data));
   send(highWord(data));
 }
 
-void ModbusMaster::send(uint8_t data)
+void JWModbusMaster::send(uint8_t data)
 {
   send(word(data));
 }
 
-uint8_t ModbusMaster::available(void)
+uint8_t JWModbusMaster::available(void)
 {
   return _u8ResponseBufferLength - _u8ResponseBufferIndex;
 }
 
-uint16_t ModbusMaster::receive(void)
+uint16_t JWModbusMaster::receive(void)
 {
   if (_u8ResponseBufferIndex < _u8ResponseBufferLength)
   {
@@ -101,22 +96,22 @@ uint16_t ModbusMaster::receive(void)
   }
 }
 
-void ModbusMaster::idle(void (*idle)())
+void JWModbusMaster::idle(void (*idle)())
 {
   _idle = idle;
 }
 
-void ModbusMaster::preTransmission(void (*preTransmission)())
+void JWModbusMaster::preTransmission(void (*preTransmission)())
 {
   _preTransmission = preTransmission;
 }
 
-void ModbusMaster::postTransmission(void (*postTransmission)())
+void JWModbusMaster::postTransmission(void (*postTransmission)())
 {
   _postTransmission = postTransmission;
 }
 
-uint16_t ModbusMaster::getResponseBuffer(uint8_t u8Index)
+uint16_t JWModbusMaster::getResponseBuffer(uint8_t u8Index)
 {
   if (u8Index < ku8MaxBufferSize)
   {
@@ -128,7 +123,7 @@ uint16_t ModbusMaster::getResponseBuffer(uint8_t u8Index)
   }
 }
 
-void ModbusMaster::clearResponseBuffer()
+void JWModbusMaster::clearResponseBuffer()
 {
   for (uint8_t i = 0; i < ku8MaxBufferSize; i++)
   {
@@ -136,7 +131,7 @@ void ModbusMaster::clearResponseBuffer()
   }
 }
 
-uint8_t ModbusMaster::setTransmitBuffer(uint8_t u8Index, uint16_t u16Value)
+uint8_t JWModbusMaster::setTransmitBuffer(uint8_t u8Index, uint16_t u16Value)
 {
   if (u8Index < ku8MaxBufferSize)
   {
@@ -149,7 +144,7 @@ uint8_t ModbusMaster::setTransmitBuffer(uint8_t u8Index, uint16_t u16Value)
   }
 }
 
-void ModbusMaster::clearTransmitBuffer()
+void JWModbusMaster::clearTransmitBuffer()
 {
   for (uint8_t i = 0; i < ku8MaxBufferSize; i++)
   {
@@ -157,25 +152,25 @@ void ModbusMaster::clearTransmitBuffer()
   }
 }
 
-uint8_t ModbusMaster::readCoils(uint16_t u16ReadAddress, uint16_t u16BitQty)
+uint8_t JWModbusMaster::readCoils(uint16_t u16ReadAddress, uint16_t u16BitQty)
 {
   _u16ReadAddress = u16ReadAddress;
   _u16ReadQty = u16BitQty;
-  return ModbusMasterTransaction(ku8MBReadCoils);
+  return JWModbusMasterTransaction(ku8MBReadCoils);
 }
 
-uint8_t ModbusMaster::readDiscreteInputs(uint16_t u16ReadAddress, uint16_t u16BitQty)
+uint8_t JWModbusMaster::readDiscreteInputs(uint16_t u16ReadAddress, uint16_t u16BitQty)
 {
   _u16ReadAddress = u16ReadAddress;
   _u16ReadQty = u16BitQty;
-  return ModbusMasterTransaction(ku8MBReadDiscreteInputs);
+  return JWModbusMasterTransaction(ku8MBReadDiscreteInputs);
 }
 
-uint8_t ModbusMaster::readHoldingRegisters(uint16_t u16ReadAddress, uint16_t u16ReadQty)
+uint8_t JWModbusMaster::readHoldingRegisters(uint16_t u16ReadAddress, uint16_t u16ReadQty)
 {
   _u16ReadAddress = u16ReadAddress;
   _u16ReadQty = u16ReadQty;
-  return ModbusMasterTransaction(ku8MBReadHoldingRegisters);
+  return JWModbusMasterTransaction(ku8MBReadHoldingRegisters);
 }
 
 /**
@@ -194,12 +189,12 @@ register.
 @return 0 on success; exception number on failure
 @ingroup register
 */
-uint8_t ModbusMaster::readInputRegisters(uint16_t u16ReadAddress,
+uint8_t JWModbusMaster::readInputRegisters(uint16_t u16ReadAddress,
                                          uint8_t u16ReadQty)
 {
   _u16ReadAddress = u16ReadAddress;
   _u16ReadQty = u16ReadQty;
-  return ModbusMasterTransaction(ku8MBReadInputRegisters);
+  return JWModbusMasterTransaction(ku8MBReadInputRegisters);
 }
 
 /**
@@ -216,11 +211,11 @@ address of the coil to be forced. Coils are addressed starting at zero.
 @return 0 on success; exception number on failure
 @ingroup discrete
 */
-uint8_t ModbusMaster::writeSingleCoil(uint16_t u16WriteAddress, uint8_t u8State)
+uint8_t JWModbusMaster::writeSingleCoil(uint16_t u16WriteAddress, uint8_t u8State)
 {
   _u16WriteAddress = u16WriteAddress;
   _u16WriteQty = (u8State ? 0xFF00 : 0x0000);
-  return ModbusMasterTransaction(ku8MBWriteSingleCoil);
+  return JWModbusMasterTransaction(ku8MBWriteSingleCoil);
 }
 
 /**
@@ -235,13 +230,13 @@ written. Registers are addressed starting at zero.
 @return 0 on success; exception number on failure
 @ingroup register
 */
-uint8_t ModbusMaster::writeSingleRegister(uint16_t u16WriteAddress,
+uint8_t JWModbusMaster::writeSingleRegister(uint16_t u16WriteAddress,
                                           uint16_t u16WriteValue)
 {
   _u16WriteAddress = u16WriteAddress;
   _u16WriteQty = 0;
   _u16TransmitBuffer[0] = u16WriteValue;
-  return ModbusMasterTransaction(ku8MBWriteSingleRegister);
+  return JWModbusMasterTransaction(ku8MBWriteSingleRegister);
 }
 
 /**
@@ -260,17 +255,17 @@ corresponding output to be ON. A logical '0' requests it to be OFF.
 @return 0 on success; exception number on failure
 @ingroup discrete
 */
-uint8_t ModbusMaster::writeMultipleCoils(uint16_t u16WriteAddress, uint16_t u16BitQty)
+uint8_t JWModbusMaster::writeMultipleCoils(uint16_t u16WriteAddress, uint16_t u16BitQty)
 {
   _u16WriteAddress = u16WriteAddress;
   _u16WriteQty = u16BitQty;
-  return ModbusMasterTransaction(ku8MBWriteMultipleCoils);
+  return JWModbusMasterTransaction(ku8MBWriteMultipleCoils);
 }
 
-uint8_t ModbusMaster::writeMultipleCoils()
+uint8_t JWModbusMaster::writeMultipleCoils()
 {
   _u16WriteQty = _u16TransmitBufferLength;
-  return ModbusMasterTransaction(ku8MBWriteMultipleCoils);
+  return JWModbusMasterTransaction(ku8MBWriteMultipleCoils);
 }
 
 /**
@@ -287,17 +282,17 @@ is packed as one word per register.
 @return 0 on success; exception number on failure
 @ingroup register
 */
-uint8_t ModbusMaster::writeMultipleRegisters(uint16_t u16WriteAddress, uint16_t u16WriteQty)
+uint8_t JWModbusMaster::writeMultipleRegisters(uint16_t u16WriteAddress, uint16_t u16WriteQty)
 {
   _u16WriteAddress = u16WriteAddress;
   _u16WriteQty = u16WriteQty;
-  return ModbusMasterTransaction(ku8MBWriteMultipleRegisters);
+  return JWModbusMasterTransaction(ku8MBWriteMultipleRegisters);
 }
 
-uint8_t ModbusMaster::writeMultipleRegisters()
+uint8_t JWModbusMaster::writeMultipleRegisters()
 {
   _u16WriteQty = _u8TransmitBufferIndex;
-  return ModbusMasterTransaction(ku8MBWriteMultipleRegisters);
+  return JWModbusMasterTransaction(ku8MBWriteMultipleRegisters);
 }
 
 /**
@@ -322,12 +317,12 @@ Result = (Current Contents && And_Mask) || (Or_Mask && (~And_Mask))
 @return 0 on success; exception number on failure
 @ingroup register
 */
-uint8_t ModbusMaster::maskWriteRegister(uint16_t u16WriteAddress, uint16_t u16AndMask, uint16_t u16OrMask)
+uint8_t JWModbusMaster::maskWriteRegister(uint16_t u16WriteAddress, uint16_t u16AndMask, uint16_t u16OrMask)
 {
   _u16WriteAddress = u16WriteAddress;
   _u16TransmitBuffer[0] = u16AndMask;
   _u16TransmitBuffer[1] = u16OrMask;
-  return ModbusMasterTransaction(ku8MBMaskWriteRegister);
+  return JWModbusMasterTransaction(ku8MBMaskWriteRegister);
 }
 
 /**
@@ -350,31 +345,31 @@ buffer.
 @return 0 on success; exception number on failure
 @ingroup register
 */
-uint8_t ModbusMaster::readWriteMultipleRegisters(uint16_t u16ReadAddress, uint16_t u16ReadQty, uint16_t u16WriteAddress, uint16_t u16WriteQty)
+uint8_t JWModbusMaster::readWriteMultipleRegisters(uint16_t u16ReadAddress, uint16_t u16ReadQty, uint16_t u16WriteAddress, uint16_t u16WriteQty)
 {
   _u16ReadAddress = u16ReadAddress;
   _u16ReadQty = u16ReadQty;
   _u16WriteAddress = u16WriteAddress;
   _u16WriteQty = u16WriteQty;
-  return ModbusMasterTransaction(ku8MBReadWriteMultipleRegisters);
+  return JWModbusMasterTransaction(ku8MBReadWriteMultipleRegisters);
 }
 
-uint8_t ModbusMaster::readWriteMultipleRegisters(uint16_t u16ReadAddress, uint16_t u16ReadQty)
+uint8_t JWModbusMaster::readWriteMultipleRegisters(uint16_t u16ReadAddress, uint16_t u16ReadQty)
 {
   _u16ReadAddress = u16ReadAddress;
   _u16ReadQty = u16ReadQty;
   _u16WriteQty = _u8TransmitBufferIndex;
-  return ModbusMasterTransaction(ku8MBReadWriteMultipleRegisters);
+  return JWModbusMasterTransaction(ku8MBReadWriteMultipleRegisters);
 }
 
 /**
- * ModbusMasterTransaction:
+ * JWModbusMasterTransaction:
  * Esta función ensambla el mensaje Modbus (ADU), lo envía y espera la respuesta.
  *
  * NOTA: Se recomienda en el futuro reestructurar este bucle bloqueante a una máquina de estados
  * o utilizar tareas de FreeRTOS para mejorar el rendimiento en ESP32.
  */
-uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
+uint8_t JWModbusMaster::JWModbusMasterTransaction(uint8_t u8MBFunction)
 {
   uint8_t u8ModbusADU[256];
   uint8_t u8ModbusADUSize = 0;
@@ -640,7 +635,7 @@ uint8_t ModbusMaster::ModbusMasterTransaction(uint8_t u8MBFunction)
 }
 
 // Helper para leer Coils (función 0x01)
-uint8_t ModbusMaster::H_readCoils(uint16_t readAddress, uint16_t readQty, bool *dataArray, bool debug)
+uint8_t JWModbusMaster::H_readCoils(uint16_t readAddress, uint16_t readQty, bool *dataArray, bool debug)
 {
   uint8_t result = readCoils(readAddress, readQty);
   if (result == ku8MBSuccess)
@@ -683,7 +678,7 @@ uint8_t ModbusMaster::H_readCoils(uint16_t readAddress, uint16_t readQty, bool *
 }
 
 // Helper para escribir Coils (funciones 0x05 y 0x0F)
-uint8_t ModbusMaster::H_writeCoils(uint16_t writeAddress, uint16_t coilQty, const bool *dataArray, bool debug)
+uint8_t JWModbusMaster::H_writeCoils(uint16_t writeAddress, uint16_t coilQty, const bool *dataArray, bool debug)
 {
   uint8_t result;
   if (coilQty == 1)
@@ -721,7 +716,7 @@ uint8_t ModbusMaster::H_writeCoils(uint16_t writeAddress, uint16_t coilQty, cons
 }
 
 // Helper para leer Discrete Inputs (función 0x02)
-uint8_t ModbusMaster::H_readDiscreteInputs(uint16_t readAddress, uint16_t readQty, bool *dataArray, bool debug)
+uint8_t JWModbusMaster::H_readDiscreteInputs(uint16_t readAddress, uint16_t readQty, bool *dataArray, bool debug)
 {
   uint8_t result = readDiscreteInputs(readAddress, readQty);
   if (result == ku8MBSuccess)
@@ -764,7 +759,7 @@ uint8_t ModbusMaster::H_readDiscreteInputs(uint16_t readAddress, uint16_t readQt
 }
 
 // Helper para leer Holding Registers (función 0x03)
-uint8_t ModbusMaster::H_readHoldingRegisters(uint16_t readAddress, uint8_t readQty, uint16_t *dataArray, bool debug)
+uint8_t JWModbusMaster::H_readHoldingRegisters(uint16_t readAddress, uint8_t readQty, uint16_t *dataArray, bool debug)
 {
   uint8_t result = readHoldingRegisters(readAddress, readQty);
   if (result == ku8MBSuccess)
@@ -793,7 +788,7 @@ uint8_t ModbusMaster::H_readHoldingRegisters(uint16_t readAddress, uint8_t readQ
 }
 
 // Helper para escribir Holding Registers (funciones 0x06 y 0x10)
-uint8_t ModbusMaster::H_writeHoldingRegisters(uint16_t writeAddress, uint8_t regQty, const uint16_t *dataArray, bool debug)
+uint8_t JWModbusMaster::H_writeHoldingRegisters(uint16_t writeAddress, uint8_t regQty, const uint16_t *dataArray, bool debug)
 {
   uint8_t result;
   if (regQty == 1)
@@ -827,7 +822,7 @@ uint8_t ModbusMaster::H_writeHoldingRegisters(uint16_t writeAddress, uint8_t reg
 }
 
 // Helper para leer Input Registers (función 0x04)
-uint8_t ModbusMaster::H_readInputRegisters(uint16_t readAddress, uint8_t readQty, uint16_t *dataArray, bool debug)
+uint8_t JWModbusMaster::H_readInputRegisters(uint16_t readAddress, uint8_t readQty, uint16_t *dataArray, bool debug)
 {
   uint8_t result = readInputRegisters(readAddress, readQty);
   if (result == ku8MBSuccess)

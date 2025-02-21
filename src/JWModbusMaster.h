@@ -15,12 +15,12 @@ Set to 1 to enable debugging features within class:
 #include "util/crc16.h"
 #include "util/word.h"
 
-class ModbusMaster
+class JWModbusMaster
 {
 public:
-  ModbusMaster();
+  JWModbusMaster();
   /**
-   * Initialize the ModbusMaster instance with a slave ID and a reference to a serial stream.
+   * Initialize the JWModbusMaster instance with a slave ID and a reference to a serial stream.
    * @param slave Modbus slave ID (1..255)
    * @param serial Reference to the serial stream (e.g., Serial, Serial1, etc.)
    */
@@ -92,7 +92,7 @@ public:
 
   // Class-defined success/exception codes
   /**
-  ModbusMaster success.
+  JWModbusMaster success.
 
   Modbus transaction was successful; the following checks were valid:
     - slave ID
@@ -106,7 +106,7 @@ public:
   static const uint8_t ku8MBSuccess = 0x00;
 
   /**
-  ModbusMaster invalid response slave ID exception.
+  JWModbusMaster invalid response slave ID exception.
 
   The slave ID in the response does not match that of the request.
 
@@ -115,7 +115,7 @@ public:
   static const uint8_t ku8MBInvalidSlaveID = 0xE0;
 
   /**
-  ModbusMaster invalid response function exception.
+  JWModbusMaster invalid response function exception.
 
   The function code in the response does not match that of the request.
 
@@ -124,17 +124,17 @@ public:
   static const uint8_t ku8MBInvalidFunction = 0xE1;
 
   /**
-  ModbusMaster response timed out exception.
+  JWModbusMaster response timed out exception.
 
   The entire response was not received within the timeout period,
-  ModbusMaster::ku8MBResponseTimeout.
+  JWModbusMaster::ku8MBResponseTimeout.
 
   @ingroup constant
   */
   static const uint8_t ku8MBResponseTimedOut = 0xE2;
 
   /**
-  ModbusMaster invalid response CRC exception.
+  JWModbusMaster invalid response CRC exception.
 
   The CRC in the response does not match the one calculated.
 
@@ -304,7 +304,7 @@ private:
    * @param u8MBFunction Modbus function code.
    * @return Status of the transaction.
    */
-  uint8_t ModbusMasterTransaction(uint8_t u8MBFunction);
+  uint8_t JWModbusMasterTransaction(uint8_t u8MBFunction);
 
   // Callback functions for handling transmission phases and idle periods.
   void (*_idle)();

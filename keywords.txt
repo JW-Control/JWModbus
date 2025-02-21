@@ -1,19 +1,59 @@
-JWModbusMaster  KEYWORD1
-ModbusMaster   KEYWORD2
-begin          KEYWORD2
-readCoils      KEYWORD2
-readDiscreteInputs   KEYWORD2
-readHoldingRegisters KEYWORD2
-readInputRegisters   KEYWORD2
-writeSingleCoil      KEYWORD2
-writeSingleRegister  KEYWORD2
-writeMultipleCoils   KEYWORD2
-writeMultipleRegisters KEYWORD2
-maskWriteRegister    KEYWORD2
-readWriteMultipleRegisters KEYWORD2
-H_readHoldingRegisters  KEYWORD2
-H_readCoils             KEYWORD2
-H_readDiscreteInputs    KEYWORD2
-H_readInputRegisters    KEYWORD2
-H_writeHoldingRegisters KEYWORD2
-H_writeCoils            KEYWORD2
+// Clases principales de Master
+JWModbusMaster         KEYWORD1
+ModbusMaster           KEYWORD2
+
+// Funciones del Master
+readCoils              FUNCTION
+readDiscreteInputs     FUNCTION
+readHoldingRegisters   FUNCTION
+readInputRegisters     FUNCTION
+writeSingleCoil        FUNCTION
+writeSingleRegister    FUNCTION
+writeMultipleCoils     FUNCTION
+writeMultipleRegisters FUNCTION
+maskWriteRegister      FUNCTION
+readWriteMultipleRegisters FUNCTION
+
+// Funciones Helper del Master
+H_readCoils            FUNCTION
+H_writeCoils           FUNCTION
+H_readHoldingRegisters FUNCTION
+H_writeHoldingRegisters FUNCTION
+H_readDiscreteInputs   FUNCTION
+H_readInputRegisters   FUNCTION
+
+// Constantes del Master
+ku8MBSuccess           LITERAL
+ku8MBIllegalFunction   LITERAL
+ku8MBIllegalDataAddress LITERAL
+ku8MBIllegalDataValue  LITERAL
+ku8MBSlaveDeviceFailure LITERAL
+ku8MBInvalidSlaveID    LITERAL
+ku8MBInvalidFunction   LITERAL
+ku8MBResponseTimedOut  LITERAL
+ku8MBInvalidCRC        LITERAL
+
+// Funciones de configuración de callbacks (Master)
+idle                   FUNCTION
+preTransmission        FUNCTION
+postTransmission       FUNCTION
+
+
+// Clases principales de Slave
+JWModbusSlave          KEYWORD1
+ModbusSlave            KEYWORD2
+
+// Funciones del Slave
+poll                   FUNCTION
+setOnReadHoldingRegister FUNCTION
+setOnWriteHoldingRegister FUNCTION
+setOnReadCoilBit       FUNCTION
+setOnWriteCoilBit      FUNCTION
+setOnReadDiscreteBit   FUNCTION
+setOnReadInputRegister FUNCTION
+setPreTransmission     FUNCTION
+setPostTransmission    FUNCTION
+
+// Funciones opcionales del Slave para FreeRTOS polling
+setFreeRTOSPoll        FUNCTION
+startPollTask          FUNCTION
